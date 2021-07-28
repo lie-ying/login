@@ -1,0 +1,124 @@
+<!doctype html>
+<!-- HTML 头部，用于声明网页的类型和编码等，并设置网页标题 -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+</head>
+<!-- 创建一个表单，用于将数据以 POST 方式提交给后端处理 -->
+<!-- "action="后面跟的是PHP语句，用于将表单中的 Sumbit 类型按钮所提交的内容传给本页面 -->
+<!--<form id="form1" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);>" method="post">
+    <input name="username" type="text" placeholder="输入用户名" />
+    <input name="password" type="password" placeholder="输入密码" />
+    <button name="submit" type="submit">登录</button>
+</form>-->
+
+<!-- HTML -->
+<form id="login-form" method="post" onsubmit="return checkForm()">
+    <input type="text" id="username" name="key">
+    <input type="password" id="input-password">
+    <input type="hidden" id="md5-password" name="value">
+    <button type="submit">Submit</button>
+</form>
+
+
+<script>
+
+
+var Vigenere = {
+      _strCpr: 'abcdefghijklmnopqrstuvwxyz',//可以将此字符串的顺序打乱点，或者添加更多字符
+      _strKey: function(strK,str){//生成密钥字符串,strK为密钥，str为明文或者密文
+          var lenStrK = strK.length;
+          var lenStr = str.length;
+          if(lenStrK != lenStr){//如果密钥长度与str不同，则需要生成密钥字符串
+              if(lenStrK < lenStr){//如果密钥长度比str短，则以不断重复密钥的方式生成密钥字符串
+                  while(lenStrK < lenStr){
+                      strK = strK + strK;
+                     lenStrK = 2 * lenStrK;
+                 }
+             }//此时，密钥字符串的长度大于或等于str长度
+             strK = strK.substring(0,lenStr);//将密钥字符串截取为与str等长的字符串
+         }
+         return strK;
+     }
+ }
+ 
+ Vigenere.lenCpr = Vigenere._strCpr.length;
+ 
+ Vigenere.Encrypt = function(K,P){//加密算法，K为密钥，P为明文
+     K = Vigenere._strKey(K,P);
+     var lenK = K.length;
+     var rlt = '';
+     var loop = 0;
+     for(loop=0; loop<lenK; loop++){
+         var iP = Vigenere._strCpr.indexOf(P.charAt(loop));
+         if(iP==-1) return '本算法暂时不能对字符：' + P.charAt(loop) + '进行加密';
+         var iK = Vigenere._strCpr.indexOf(K.charAt(loop));
+         if(iK==-1) return '密钥中包含非法字符：' + K.charAt(loop);
+         var i = (iP + iK) % Vigenere.lenCpr;
+         rlt = rlt + Vigenere._strCpr.charAt(i);
+     }
+     return rlt;    
+ };
+
+ Vigenere.DisEncrypt = function(K,C){
+     K = Vigenere._strKey(K,C);
+     var lenK = K.length;
+     var rlt = '';
+     var loop = 0;
+     for(loop=0; loop<lenK; loop++){
+         var iK = Vigenere._strCpr.indexOf(K.charAt(loop));
+         if(iK==-1) return '密钥中包含非法字符：' + K.charAt(loop);        
+         var iC = Vigenere._strCpr.indexOf(C.charAt(loop));
+         if(iK > iC){
+             rlt += Vigenere._strCpr.charAt(iC + Vigenere.lenCpr - iK);
+         }
+         else{
+             rlt += Vigenere._strCpr.charAt(iC - iK);
+         }
+     }
+     return rlt;
+ };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    function checkForm() {
+        var input_key = document.getElementById('username');
+        var input_pwd = document.getElementById('input-password');
+        var md5_pwd = document.getElementById('md5-password');
+        
+        var str3 = Vigenere.Encrypt(input_key.value,input_pwd.value);
+        md5_pwd.value = str3;
+        // 继续下一步:
+        return true;
+    }
+</script>
+
+
+
+
+
+
